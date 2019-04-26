@@ -7,3 +7,5 @@ Tech used:
 6.Bower package manager - is the analog for npm for client side
 7.Bootstrap
 8.Jquery & Ajax
+9.Passport - simple unobtrusive authentication for Node.js
+10.bcryptjs - for hashing passwords
