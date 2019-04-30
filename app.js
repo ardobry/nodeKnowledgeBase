@@ -5,9 +5,11 @@ const bodyParser = require("body-parser");
 const expressValidator = require("express-validator");
 const flash = require("connect-flash");
 const session = require("express-session");
+const config = require("./config/database");
+const passport = require("passport");
 
 //Connect to our db
-mongoose.connect("mongodb://localhost/nodekb");
+mongoose.connect(config.database);
 let db = mongoose.connection;
 
 //Check connection
@@ -73,6 +75,19 @@ app.use(
   })
 );
 
+//Passport Config
+require("./config/passport")(passport);
+//Passport Middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+//* means 'for all routes'
+app.get('*', function(req, res, next){
+  res.locals.user = req.user || null;
+  next();
+});
+
+
 //Home route
 app.get("/", (req, res) => {
   Article.find({}, (err, articles) => {
@@ -85,12 +100,11 @@ app.get("/", (req, res) => {
 });
 
 //Route Files
-let articles = require('./routes/articles');
-let users = require('./routes/users');
+let articles = require("./routes/articles");
+let users = require("./routes/users");
 //Anything that goes articles/[sth] uses that file
-app.use('/articles', articles);
-app.use('/users', users);
-
+app.use("/articles", articles);
+app.use("/users", users);
 
 //Start server
 app.listen(3000, () => {
